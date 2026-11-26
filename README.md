@@ -10,3 +10,7 @@ There are three DB tables:
   <li>Courses</li>
   <li>Registrations</li>
 </ol>
+
+<h5>Shadcn Commands:</h5>
+npx shadcn@latest init -d
+npx shadcn@latest add button input label card table tabs sonner -y
