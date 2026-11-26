@@ -14,8 +14,8 @@ There are three DB tables:
 <h5>Shadcn Commands:</h5>
 
 ```
-npx shadcn@latest init -d
-npx shadcn@latest add button input label card table tabs sonner -y
+npm install tailwindcss @tailwindcss/postcss postcss
+
 ```
 
 <h5>SQL package:</h5>
