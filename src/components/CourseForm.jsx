@@ -1,11 +1,7 @@
 "use client";
 import { useState } from "react";
-import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { postJson } from "@/lib/client";
+import { Card, Field, Message, inputClass, buttonClass } from "@/components/Common";
 
 const fields = [
   { name: "courseCode", label: "Course Code", type: "text", maxLength: 20, placeholder: "CS330" },
@@ -17,46 +13,45 @@ const empty = { courseCode: "", courseName: "", creditHours: "" };
 export default function CourseForm() {
   const [form, setForm] = useState(empty);
   const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState(null);
 
   async function submit(e) {
     e.preventDefault();
     setLoading(true);
+    setMessage(null);
     try {
       await postJson("/api/courses", form);
-      toast.success("Course saved successfully.");
+      setMessage({ type: "success", text: "Course saved successfully." });
       setForm(empty);
     } catch (err) {
-      toast.error(err.message);
+      setMessage({ type: "error", text: err.message });
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Course Management</CardTitle>
-        <CardDescription>Enter new course information.</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={submit} className="grid gap-4 sm:grid-cols-2">
-          {fields.map((f) => (
-            <div key={f.name} className="grid gap-2">
-              <Label htmlFor={f.name}>{f.label}</Label>
-              <Input
-                id={f.name}
-                {...f}
-                value={form[f.name]}
-                onChange={(e) => setForm({ ...form, [f.name]: e.target.value })}
-                required
-              />
-            </div>
-          ))}
-          <div className="sm:col-span-2">
-            <Button type="submit" disabled={loading}>{loading ? "Saving..." : "Save Course"}</Button>
-          </div>
-        </form>
-      </CardContent>
+    <Card title="Course Management" description="Enter new course information.">
+      <form onSubmit={submit} className="grid gap-4 sm:grid-cols-2">
+        {fields.map(({ label, ...props }) => (
+          <Field key={props.name} label={label} htmlFor={props.name}>
+            <input
+              id={props.name}
+              {...props}
+              className={inputClass}
+              value={form[props.name]}
+              onChange={(e) => setForm({ ...form, [props.name]: e.target.value })}
+              required
+            />
+          </Field>
+        ))}
+        <Message message={message} />
+        <div className="sm:col-span-2">
+          <button type="submit" disabled={loading} className={buttonClass}>
+            {loading ? "Saving..." : "Save Course"}
+          </button>
+        </div>
+      </form>
     </Card>
   );
 }
